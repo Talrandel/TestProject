@@ -7,11 +7,16 @@ namespace TestProject.Module.WebApi
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args);
+            host.Run();
         }
+        
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        public static IWebHost CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseUrls("http://localhost:55485")
+                .UseIISIntegration()
+                .UseStartup<Startup>()
+                .Build();
     }
 }

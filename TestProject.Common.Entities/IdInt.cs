@@ -10,9 +10,9 @@
         }
         public int Id => _value;
 
-        public bool Equals(int other)
+        public bool Equals(IdInt other)
         {
-            return _value == other;
+            return Id == other.Id;
         }
 
         public static implicit operator IdInt(int id)

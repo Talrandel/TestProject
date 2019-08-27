@@ -1,41 +1,33 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using TestProject.Application.Persons;
 using TestProject.Domain.Persons;
 using TestProject.Common.DAL.MongoDB;
 using TestProject.Common.Entities;
 using TestProject.Common.DAL.Core;
 
-namespace TestProject.Module.WebApi
+namespace TestProject.Module.WebApi2.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Produces("application/json")]
-    //[ApiVersion("1.0")]
-    //[Route("api/v{version:apiVersion}/[controller]")]
-    [Route("api/[controller]/[action]")]
     public class PersonController : ControllerBase
     {
         private readonly IPersonRepository _personRepository;
 
         public PersonController()
         {
-            //_personRepository = personRepository;
-            //var client = new MongoDB.Driver.MongoClient("mongodb://localhost:27017");
-            //var context = new MongoDbContext<Person, IdInt>(client, "MongoDbTest", "Person");
-            //_personRepository = new PersonRepository(context);
             var context = new InMemoryDbContext<Person, IdInt>();
             _personRepository = new PersonRepository(context);
+            _personRepository.CreateAsync(new Person(1) { FirstName = "1", LastName = "2" });
+            _personRepository.CreateAsync(new Person(2) { FirstName = "3", LastName = "4" });
+            _personRepository.CreateAsync(new Person(3) { FirstName = "5", LastName = "6" });
         }
 
-        public ActionResult Index()
-        {
-            return Ok();
-        }
-
-        // GET api/Person
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IList<Person>>> GetAll()
         {
             var personList = await _personRepository.GetListAsync();
             if (personList == null || personList.Count == 0)
@@ -43,7 +35,6 @@ namespace TestProject.Module.WebApi
             return new JsonResult(personList);
         }
 
-        // GET api/Person/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle(int id)
         {
@@ -55,22 +46,16 @@ namespace TestProject.Module.WebApi
 
         // POST api/Person/5
         [HttpPost]
-        public async Task<IActionResult> Create(string personJson)
+        public async Task<IActionResult> Create(Person person)
         {
-            var person = JsonConvert.DeserializeObject(personJson) as Person;
-            if (person == null)
-                return BadRequest();
             await _personRepository.CreateAsync(person);
             return Ok();
         }
 
         // PUT api/Person/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(string personJson)
+        public async Task<IActionResult> Edit(Person person)
         {
-            var person = JsonConvert.DeserializeObject(personJson) as Person;
-            if (person == null)
-                return BadRequest();
             await _personRepository.EditAsync(person);
             return Ok();
         }

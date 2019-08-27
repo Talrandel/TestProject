@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using TestProject.Application.Movies;
 using TestProject.Application.Persons;
+using TestProject.Common.DAL.Core;
 using TestProject.Common.DAL.MongoDB;
 using TestProject.Common.Entities;
 using TestProject.Domain.Movies;
@@ -34,25 +35,18 @@ namespace TestProject.Module.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             // options => options.EnableEndpointRouting = false
+            //services.AddOptions();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            //services.AddRouting(options => options.LowercaseUrls = true);
-            //services.AddApiVersioning(config =>
+            //services.AddSwaggerGen(options =>
             //{
-            //    config.ReportApiVersions = true;
-            //    config.AssumeDefaultVersionWhenUnspecified = true;
-            //    config.DefaultApiVersion = new ApiVersion(1, 0);
-            //    config.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            //    options.SwaggerDoc("v1", new Info
+            //    {
+            //        Version = "v1",
+            //        Title = "Test API",
+            //        Description = "ASP.NET Core Web API"
+            //    });
             //});
-            //services.AddVersionedApiExplorer(o => o.GroupNameFormat = "'v'VVV");
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Test API",
-                    Description = "ASP.NET Core Web API"
-                });
-            });
+            //services.AddSingleton<IDbContext<Person, IdInt>, InMemoryDbContext<Person, IdInt>>();
             //services.AddSingleton<IMovieRepository, MovieRepository>();
             //services.AddSingleton<IPersonRepository, PersonRepository>();
             //ConfigureMongoDbServices(services);
@@ -83,40 +77,24 @@ namespace TestProject.Module.WebApi
             });
         }
 
-        public void Configure(IApplicationBuilder app,
-            ILoggerFactory loggerFactory,
-            IHostingEnvironment env,
-            IApiVersionDescriptionProvider provider)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-                //app.UseExceptionHandler(errorApp =>
-                //{
-                //    errorApp.Run(async context =>
-                //    {
-                //        context.Response.StatusCode = 500;
-                //        context.Response.ContentType = "text/plain";
-                //        var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
-                //        if (errorFeature != null)
-                //        {
-                //            var logger = loggerFactory.CreateLogger("Global exception logger");
-                //            logger.LogError(500, errorFeature.Error, errorFeature.Error.Message);
-                //        }
+            //else
+            //{
+            //    app.UseHsts();
+            //}
 
-                //        await context.Response.WriteAsync("There was an error");
-                //    });
-                //});
-            }
+            //app.UseSwagger();
+            //app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Test API V1"));
 
-            app.UseSwagger();
-            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Test API V1"));
-
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            //app.UseMvc();
             app.UseMvc(ConfigureRoute);
         }
 
