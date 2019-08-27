@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestProject.Application.Core\TestProject.Application.Core.csproj" />
+    <ProjectReference Include="..\TestProject.Common.Entities\TestProject.Common.Entities.csproj" />
+    <ProjectReference Include="..\TestProject.Domain.Movie\TestProject.Domain.Movies.csproj" />
+  </ItemGroup>
+
+</Project>

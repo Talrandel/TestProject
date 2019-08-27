@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestProject.Common.DAL.Core\TestProject.Common.DAL.Core.csproj" />
+    <ProjectReference Include="..\TestProject.Common.Entities\TestProject.Common.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
