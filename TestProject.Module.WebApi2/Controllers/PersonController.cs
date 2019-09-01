@@ -32,6 +32,7 @@ namespace TestProject.Module.WebApi2.Controllers
             var personList = await _personRepository.GetListAsync();
             if (personList == null || personList.Count == 0)
                 return NotFound();
+            //return new JsonResult(personList);
             return new JsonResult(personList);
         }
 
@@ -44,7 +45,6 @@ namespace TestProject.Module.WebApi2.Controllers
             return new JsonResult(person);
         }
 
-        // POST api/Person/5
         [HttpPost]
         public async Task<IActionResult> Create(Person person)
         {
@@ -52,7 +52,6 @@ namespace TestProject.Module.WebApi2.Controllers
             return Ok();
         }
 
-        // PUT api/Person/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(Person person)
         {
@@ -60,7 +59,6 @@ namespace TestProject.Module.WebApi2.Controllers
             return Ok();
         }
 
-        // DELETE api/Person/5
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {

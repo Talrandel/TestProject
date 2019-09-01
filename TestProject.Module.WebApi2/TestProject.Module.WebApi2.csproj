@@ -14,10 +14,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestProject.Application.Core\TestProject.Application.Core.csproj" />
+    <ProjectReference Include="..\TestProject.Application.Movie\TestProject.Application.Movies.csproj" />
     <ProjectReference Include="..\TestProject.Application.Person\TestProject.Application.Persons.csproj" />
     <ProjectReference Include="..\TestProject.Common.DAL.Core\TestProject.Common.DAL.Core.csproj" />
     <ProjectReference Include="..\TestProject.Common.DAL.MongoDB\TestProject.Common.DAL.MongoDB.csproj" />
-    <ProjectReference Include="..\TestProject.Common.DAL.PostgreSQL\TestProject.Common.DAL.PostgreSQL.csproj" />
     <ProjectReference Include="..\TestProject.Common.Entities\TestProject.Common.Entities.csproj" />
     <ProjectReference Include="..\TestProject.Domain.Person\TestProject.Domain.Persons.csproj" />
   </ItemGroup>

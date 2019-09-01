@@ -1,8 +1,7 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TestProject.Common.DAL.Core;
 using TestProject.Common.Entities;
@@ -15,56 +14,49 @@ namespace TestProject.Common.DAL.MongoDB
         protected readonly IMongoClient _client;
         protected readonly IMongoDatabase _database;
 
-        protected readonly string _databaseName;
         protected readonly string _collectionName;
 
-        public MongoDbContext(IMongoClient client, string databaseName, string collectionName)
+        public MongoDbContext(IOptions<MongoDbSettings> settings)
         {
-            _client = client;
-            _databaseName = databaseName;
-            _collectionName = collectionName;
-            _database = _client.GetDatabase(_databaseName);
+            _client = new MongoClient(settings.Value.ConnectionString);
+            _database = _client.GetDatabase(settings.Value.DatabaseName);
+            _collectionName = nameof(TEntity);
+        }
+
+        public IMongoCollection<TEntity> Entities
+        {
+            get { return _database.GetCollection<TEntity>(_collectionName); }
         }
 
         public async Task CreateAsync(TEntity entity)
         {
-            var collection = _database.GetCollection<BsonDocument>(_collectionName);
-            // TODO: алярм! Проверить работу сериализации
-            var document = entity.ToBsonDocument();
-            await collection.InsertOneAsync(document).ConfigureAwait(false);
+            await Entities.InsertOneAsync(entity).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync(IId id)
         {
-            var collection = _database.GetCollection<BsonDocument>(_collectionName);
+            // TODO: id в константу?
             var filter = new BsonDocument("id", BsonValue.Create(id));
-            await collection.DeleteOneAsync(filter);
+            await Entities.DeleteOneAsync(filter);
         }
 
         public async Task EditAsync(TEntity entity)
         {
-            var collection = _database.GetCollection<BsonDocument>(_collectionName);
             var filter = new BsonDocument("id", BsonValue.Create(entity.Id));
-            // TODO: алярм! Проверить работу сериализации
-            var document = entity.ToBsonDocument();
-            await collection.ReplaceOneAsync(filter, document).ConfigureAwait(false);
+            await Entities.ReplaceOneAsync(filter, entity).ConfigureAwait(false);
         }
 
         public async Task<TEntity> GetAsync(IId id)
         {
-            var collection = _database.GetCollection<BsonDocument>(_collectionName);
-            var filter = new BsonDocument();
-            var rawEntity = await collection.Find(filter).FirstAsync().ConfigureAwait(false);
-            var entity = BsonSerializer.Deserialize<TEntity>(rawEntity);
+            var filter = new BsonDocument("id", BsonValue.Create(id));
+            var entity = await Entities.Find(filter).FirstAsync().ConfigureAwait(false);
             return entity;
         }
 
         public async Task<IList<TEntity>> GetListAsync()
         {
-            var collection = _database.GetCollection<BsonDocument>(_collectionName);
             var filter = new BsonDocument();
-            var rawEntityList = await collection.Find(filter).ToListAsync().ConfigureAwait(false);
-            var entityList = rawEntityList.Select(p => BsonSerializer.Deserialize<TEntity>(p)).ToList();
+            var entityList = await Entities.Find(filter).ToListAsync().ConfigureAwait(false);
             return entityList;
         }
     }
