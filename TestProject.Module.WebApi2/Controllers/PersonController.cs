@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TestProject.Application.Persons;
 using TestProject.Domain.Persons;
-using TestProject.Common.DAL.MongoDB;
-using TestProject.Common.Entities;
-using TestProject.Common.DAL.Core;
 
 namespace TestProject.Module.WebApi2.Controllers
 {
@@ -15,39 +11,45 @@ namespace TestProject.Module.WebApi2.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
+        private readonly ILogger<PersonController> _logger;
         private readonly IPersonRepository _personRepository;
 
-        public PersonController()
+        public PersonController(ILogger<PersonController> logger, IPersonRepository personRepository)
         {
-            var context = new InMemoryDbContext<Person, IdInt>();
-            _personRepository = new PersonRepository(context);
-            _personRepository.CreateAsync(new Person(1) { FirstName = "1", LastName = "2" });
-            _personRepository.CreateAsync(new Person(2) { FirstName = "3", LastName = "4" });
-            _personRepository.CreateAsync(new Person(3) { FirstName = "5", LastName = "6" });
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _personRepository = personRepository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IList<Person>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
+            _logger.LogInformation(nameof(GetAll));
             var personList = await _personRepository.GetListAsync();
             if (personList == null || personList.Count == 0)
+            {
+                _logger.LogWarning($"{nameof(GetAll)} - нет результатов");
                 return NotFound();
-            //return new JsonResult(personList);
+            }
             return new JsonResult(personList);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSingle(int id)
         {
+            _logger.LogInformation(nameof(GetSingle));
             var person = await _personRepository.GetAsync(id);
             if (person == null)
+            {
+                _logger.LogWarning($"{nameof(GetSingle)} - {id} - нет результатов");
                 return NotFound();
+            }
             return new JsonResult(person);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Person person)
         {
+            _logger.LogInformation(nameof(Create));
             await _personRepository.CreateAsync(person);
             return Ok();
         }
@@ -55,6 +57,7 @@ namespace TestProject.Module.WebApi2.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(Person person)
         {
+            _logger.LogInformation(nameof(Edit));
             await _personRepository.EditAsync(person);
             return Ok();
         }
@@ -62,6 +65,7 @@ namespace TestProject.Module.WebApi2.Controllers
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
+            _logger.LogInformation(nameof(Delete));
             await _personRepository.DeleteAsync(id);
         }
     }

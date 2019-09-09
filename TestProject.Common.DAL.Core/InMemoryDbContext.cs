@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TestProject.Common.DAL.Core;
 using TestProject.Common.Entities;
 
 namespace TestProject.Common.DAL.Core
@@ -50,6 +49,12 @@ namespace TestProject.Common.DAL.Core
         public Task<IList<TEntity>> GetListAsync()
         {
             return Task.FromResult(_items);
+        }
+
+        public Task Clear()
+        {
+            _items.Clear();
+            return Task.CompletedTask;
         }
     }
 }

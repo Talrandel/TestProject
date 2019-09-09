@@ -16,5 +16,10 @@ namespace TestProject.Common.DAL.Core
         Task<TEntity> GetAsync(IId id);
 
         Task<IList<TEntity>> GetListAsync();
+
+#if DEBUG
+        Task Clear();
+#endif
+
     }
 }

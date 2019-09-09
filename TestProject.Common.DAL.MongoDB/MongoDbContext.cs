@@ -35,7 +35,6 @@ namespace TestProject.Common.DAL.MongoDB
 
         public async Task DeleteAsync(IId id)
         {
-            // TODO: id в константу?
             var filter = new BsonDocument("id", BsonValue.Create(id));
             await Entities.DeleteOneAsync(filter);
         }
@@ -58,6 +57,12 @@ namespace TestProject.Common.DAL.MongoDB
             var filter = new BsonDocument();
             var entityList = await Entities.Find(filter).ToListAsync().ConfigureAwait(false);
             return entityList;
+        }
+
+        public async Task Clear()
+        {
+            var filter = new BsonDocument();
+            await Entities.DeleteManyAsync(filter).ConfigureAwait(false);
         }
     }
 }

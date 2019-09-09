@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using TestProject.Application.Movies;
+using TestProject.Application.Movies.Services;
 using TestProject.Application.Persons;
+using TestProject.Application.Persons.Services;
 using TestProject.Common.DAL.Core;
 using TestProject.Common.DAL.MongoDB;
+using TestProject.Common.DAL.PostgreSQL;
 using TestProject.Common.Entities;
 using TestProject.Domain.Movies;
 using TestProject.Domain.Persons;
@@ -49,6 +46,23 @@ namespace TestProject.Module.WebApi2
         private void ConfigureCustomServices(IServiceCollection services)
         {
             ConfigureMongoDbServices(services);
+
+            services.AddTransient<IMovieRepository, MovieRepository>();
+            services.AddTransient<IPersonRepository, PersonRepository>();
+        }
+        private void ConfigurePostgresServices(IServiceCollection services)
+        {
+            // TODO: добавить чтение конфига для postgres и настройки
+            //services.Configure<MongoDbSettings>(options =>
+            //{
+            //    options.ConnectionString = Configuration.GetSection("MongoDbSettings:ConnectionString").Value;
+            //    options.DatabaseName = Configuration.GetSection("MongoDbSettings:DatabaseName").Value;
+            //});
+            services.AddTransient<IDbContext<Movie, IdInt>, PostgresDbContext<Movie, IdInt>>();
+            services.AddTransient<IDbContext<Person, IdInt>, PostgresDbContext<Person, IdInt>>();
+
+            services.AddTransient<MovieSeedService>();
+            services.AddTransient<PersonSeedService>();
         }
 
         private void ConfigureMongoDbServices(IServiceCollection services)
@@ -58,23 +72,23 @@ namespace TestProject.Module.WebApi2
                 options.ConnectionString = Configuration.GetSection("MongoDbSettings:ConnectionString").Value;
                 options.DatabaseName = Configuration.GetSection("MongoDbSettings:DatabaseName").Value;
             });
-
             services.AddTransient<IDbContext<Movie, IdInt>, MongoDbContext<Movie, IdInt>>();
             services.AddTransient<IDbContext<Person, IdInt>, MongoDbContext<Person, IdInt>>();
-
-            services.AddTransient<IMovieRepository, MovieRepository>();
-            services.AddTransient<IPersonRepository, PersonRepository>();
+            
+            services.AddTransient<MovieSeedService>();
+            services.AddTransient<PersonSeedService>();
         }
 
         public void Configure(
             IApplicationBuilder app, 
-            IHostingEnvironment env, 
-            ILoggerFactory loggerFactory)
+            IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseSwagger();
             app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Test API V1"));

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestProject.Common.DAL.Core;
@@ -6,32 +6,53 @@ using TestProject.Common.Entities;
 
 namespace TestProject.Common.DAL.PostgreSQL
 {
-    public class PostgresDbContext<TEntity, IId> : IDbContext<TEntity, IId>
-         where TEntity : IEntityBase<IId>
+    // Крайне спорное решение.
+    // В реальности две разные субд в рамках одного проекта/монолита вряд ли когда-нибудь будут использоваться. 
+    // И подходы у MongoDb и у PostgreSQL различаются. Поэтому в целях написания тестового проекта получается сие.
+
+    public class PostgresDbContext<TEntity, IId> : DbContext, IDbContext<TEntity, IId>
+         where TEntity : class, IEntityBase<IId>
     {
-        public Task CreateAsync(TEntity entity)
+        // TODO: логировать работу с бд
+
+        public DbSet<TEntity> Entities { get; set; }
+
+        public async Task CreateAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            Entities.Add(entity);
+            await SaveChangesAsync();
         }
 
-        public Task DeleteAsync(IId id)
+        public async Task DeleteAsync(IId id)
         {
-            throw new NotImplementedException();
+            var entityToDelete = await Entities.SingleOrDefaultAsync(e => e.Id.Equals(id)).ConfigureAwait(false);
+            Entities.Remove(entityToDelete);
+            await SaveChangesAsync();
         }
 
-        public Task EditAsync(TEntity entity)
+        public async Task EditAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            Entities.Update(entity);
+            await SaveChangesAsync();
         }
 
-        public Task<TEntity> GetAsync(IId id)
+        public async Task<TEntity> GetAsync(IId id)
         {
-            throw new NotImplementedException();
+            return await Entities.SingleOrDefaultAsync(e => e.Id.Equals(id)).ConfigureAwait(false);
         }
 
-        public Task<IList<TEntity>> GetListAsync()
+        public async Task<IList<TEntity>> GetListAsync()
         {
-            throw new NotImplementedException();
+            return await Entities.ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task Clear()
+        {
+            foreach (var entity in Entities)
+            {
+                Entities.Remove(entity);
+            }
+            await SaveChangesAsync();
         }
     }
 }

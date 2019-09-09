@@ -1,70 +1,72 @@
-﻿//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Mvc;
-//using Newtonsoft.Json;
-//using TestProject.Application.Movies;
-//using TestProject.Domain.Movies;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using TestProject.Application.Movies;
+using TestProject.Domain.Movies;
 
-//namespace TestProject.Module.WebApi
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class MovieController : ControllerBase
-//    {
-//        private readonly IMovieRepository _movieRepository;
+namespace TestProject.Module.WebApi2.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MovieController : ControllerBase
+    {
+        private readonly ILogger<MovieController> _logger;
+        private readonly IMovieRepository _movieRepository;
 
-//        public MovieController(IMovieRepository movieRepository)
-//        {
-//            _movieRepository = movieRepository;
-//        }
+        public MovieController(ILogger<MovieController> logger, IMovieRepository movieRepository)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _movieRepository = movieRepository;
+        }
 
-//        // GET api/movie
-//        [HttpGet]
-//        public async Task<IActionResult> Get()
-//        {
-//            var movies = await _movieRepository.GetListAsync();
-//            if (movies == null || movies.Count == 0)
-//                return NotFound();
-//            return new JsonResult(movies);
-//        }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            _logger.LogInformation(nameof(GetAll));
+            var movies = await _movieRepository.GetListAsync();
+            if (movies == null || movies.Count == 0)
+            {
+                _logger.LogWarning($"{nameof(GetAll)} - нет результатов");
+                return NotFound();
+            }
+            return new JsonResult(movies);
+        }
 
-//        // GET api/movie/5
-//        [HttpGet("{id}")]
-//        public async Task<IActionResult> GetById(int id)
-//        {
-//            var movie = await _movieRepository.GetAsync(id);
-//            if (movie == null)
-//                return NotFound();
-//            return new JsonResult(movie);
-//        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSingle(int id)
+        {
+            _logger.LogInformation(nameof(GetSingle));
+            var movie = await _movieRepository.GetAsync(id);
+            if (movie == null)
+            {
+                _logger.LogWarning($"{nameof(GetSingle)} - {id} - нет результатов");
+                return NotFound();
+            }
+            return new JsonResult(movie);
+        }
 
-//        // GET api/movie/5
-//        [HttpPost]
-//        public async Task<IActionResult> Create(string entityJson)
-//        {
-//            var movie = JsonConvert.DeserializeObject(entityJson) as Movie;
-//            if (movie == null)
-//                return BadRequest();
-//            await _movieRepository.CreateAsync(movie);
-//            return Ok();
-//        }
+        [HttpPost]
+        public async Task<IActionResult> Create(Movie movie)
+        {
+            _logger.LogInformation(nameof(Create));
+            await _movieRepository.CreateAsync(movie);
+            return Ok();
+        }
 
-//        // PUT api/movie/5
-//        [HttpPut]
-//        public async Task<IActionResult> Edit(string entityJson)
-//        {
-//            var movie = JsonConvert.DeserializeObject(entityJson) as Movie;
-//            if (movie == null)
-//                return BadRequest();
-//            await _movieRepository.EditAsync(movie);
-//            return Ok();
-//        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(Movie movie)
+        {
+            _logger.LogInformation(nameof(Edit));
+            await _movieRepository.EditAsync(movie);
+            return Ok();
+        }
 
-//        // DELETE 
-//        // api/movie/5
-//        [HttpDelete("{id}")]
-//        public async Task Delete(int id)
-//        {
-//            await _movieRepository.DeleteAsync(id);
-//        }
-//    }
-//}
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            _logger.LogInformation(nameof(Delete));
+            await _movieRepository.DeleteAsync(id);
+        }
+    }
+}
