@@ -14,14 +14,14 @@ export class PersonService {
         return this.http.get(this.url);
     }
 
-    //createProduct(product: Product) {
-    //    return this.http.post(this.url, product);
-    //}
-    //updateProduct(product: Product) {
+    createPerson(person: Person) {
+        return this.http.post(this.url, person);
+    }
+    updatePerson(person: Person) {
 
-    //    return this.http.put(this.url + '/' + product.id, product);
-    //}
-    //deleteProduct(id: number) {
-    //    return this.http.delete(this.url + '/' + id);
-    //}
+        return this.http.put(this.url + '/' + person.id, person);
+    }
+    deletePerson(id: number) {
+        return this.http.delete(this.url + '/' + id);
+    }
 }

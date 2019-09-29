@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Domain", "2. Domain", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Application", "3. Application", "{284D6EB9-A2C0-4EB2-A401-2C35FF0A7318}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Module", "4. Module", "{B3C65CB6-05B4-41E5-AFC7-26447883F600}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Api", "4. Api", "{B3C65CB6-05B4-41E5-AFC7-26447883F600}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5. Client", "5. Client", "{E3BB18AB-C7FE-42CE-B521-BF3B9513E07D}"
 EndProject
@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject.Domain.Movies",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject.Client.Angular", "TestProject.Client.Angular\TestProject.Client.Angular.csproj", "{7B366D0B-38E5-483C-8AAF-DB9BBBAF833D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject.Module.WebApi2", "TestProject.Module.WebApi2\TestProject.Module.WebApi2.csproj", "{C5049235-BF15-4ADC-97C7-91F9C18C633D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject.WebApi", "TestProject.Module.WebApi2\TestProject.WebApi.csproj", "{C5049235-BF15-4ADC-97C7-91F9C18C633D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

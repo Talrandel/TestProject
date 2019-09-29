@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using TestProject.Application.Persons;
 using TestProject.Domain.Persons;
 
-namespace TestProject.Module.WebApi2.Controllers
+namespace TestProject.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

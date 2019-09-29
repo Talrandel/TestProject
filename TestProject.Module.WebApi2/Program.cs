@@ -13,7 +13,7 @@ using TestProject.Common.Entities;
 using TestProject.Domain.Movies;
 using TestProject.Domain.Persons;
 
-namespace TestProject.Module.WebApi2
+namespace TestProject.WebApi
 {
     public class Program
     {

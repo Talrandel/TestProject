@@ -9,16 +9,16 @@ import { PersonService } from './person.Service';
 })
 export class AppComponent implements OnInit {
 
-    selectedPerson: Person = new Person();    // изменяемый товар
-    persons: Person[];                  // массив товаров
-    tableMode: boolean = true;          // табличный режим
+    selectedPerson: Person = new Person();
+    persons: Person[];
+    tableMode: boolean = true;
 
     constructor(private dataService: PersonService) { }
 
     ngOnInit() {
-        this.loadProducts();    // загрузка данных при старте компонента  
+        this.loadProducts();
     }
-    // получаем данные через сервис
+
     loadProducts() {
         this.dataService.getPersons()
             .subscribe((data: Person[]) => this.persons = data);
